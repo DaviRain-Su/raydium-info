@@ -111,7 +111,45 @@ const PoolInfoPage = () => {
   return (
     <div className="container">
       <h1>Raydium Pool Information</h1>
-      <div className="controls">{/* ... (controls remain the same) */}</div>
+      <div className="controls">
+        <select value={poolType} onChange={(e) => setPoolType(e.target.value)}>
+          {poolTypes.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+        <select
+          value={poolSortField}
+          onChange={(e) => setPoolSortField(e.target.value)}>
+          {poolSortFields.map((field) => (
+            <option key={field} value={field}>
+              {field}
+            </option>
+          ))}
+        </select>
+        <select value={sortType} onChange={(e) => setSortType(e.target.value)}>
+          {sortTypes.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+          min="1"
+          max="1000"
+        />
+        <input
+          type="number"
+          value={page}
+          onChange={(e) => setPage(Number(e.target.value))}
+          min="1"
+        />
+        <button onClick={fetchPoolInfo}>Fetch Pool Info</button>
+      </div>
       {loading && <p>Loading pool info...</p>}
       {error && <p className="error">{error}</p>}
       {poolInfo && poolInfo.length > 0 ? (
