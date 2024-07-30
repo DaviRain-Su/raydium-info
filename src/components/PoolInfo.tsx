@@ -71,6 +71,7 @@ const PoolInfoPage = () => {
   const [sortType, setSortType] = useState("desc")
   const [pageSize, setPageSize] = useState(100)
   const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -92,6 +93,7 @@ const PoolInfoPage = () => {
       console.log("Received data:", apiResponse)
       if (apiResponse.success && apiResponse.data.data) {
         setPoolInfo(apiResponse.data.data)
+        setTotalPages(Math.ceil(apiResponse.data.count / pageSize))
         console.log("Pool info set:", apiResponse.data.data)
       } else {
         throw new Error("Failed to fetch pool info")
@@ -105,6 +107,18 @@ const PoolInfoPage = () => {
       setError("Failed to fetch Raydium pool info. Please try again later.")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage(page - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1)
     }
   }
 
@@ -149,49 +163,73 @@ const PoolInfoPage = () => {
           min="1"
         />
         <button onClick={fetchPoolInfo}>Fetch Pool Info</button>
+        <div className="pagination">
+          <button onClick={handlePreviousPage} disabled={page === 1}>
+            Previous
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button onClick={handleNextPage} disabled={page === totalPages}>
+            Next
+          </button>
+        </div>
       </div>
       {loading && <p>Loading pool info...</p>}
       {error && <p className="error">{error}</p>}
       {poolInfo && poolInfo.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Pool</th>
-              <th>Type</th>
-              <th>Price</th>
-              <th>TVL</th>
-              <th>Volume 24h</th>
-              <th>APR 24h</th>
-            </tr>
-          </thead>
-          <tbody>
-            {poolInfo.map((pool) => (
-              <tr key={pool.id}>
-                <td>{`${pool.mintA.symbol}/${pool.mintB.symbol}`}</td>
-                <td>{pool.type}</td>
-                <td>
-                  $
-                  {pool.price.toLocaleString(undefined, {
-                    maximumFractionDigits: 6
-                  })}
-                </td>
-                <td>
-                  $
-                  {pool.tvl.toLocaleString(undefined, {
-                    maximumFractionDigits: 2
-                  })}
-                </td>
-                <td>
-                  $
-                  {pool.day.volume.toLocaleString(undefined, {
-                    maximumFractionDigits: 2
-                  })}
-                </td>
-                <td>{pool.day.apr.toFixed(2)}%</td>
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Pool</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>TVL</th>
+                <th>Volume 24h</th>
+                <th>APR 24h</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {poolInfo.map((pool) => (
+                <tr key={pool.id}>
+                  <td>{`${pool.mintA.symbol}/${pool.mintB.symbol}`}</td>
+                  <td>{pool.type}</td>
+                  <td>
+                    $
+                    {pool.price.toLocaleString(undefined, {
+                      maximumFractionDigits: 6
+                    })}
+                  </td>
+                  <td>
+                    $
+                    {pool.tvl.toLocaleString(undefined, {
+                      maximumFractionDigits: 2
+                    })}
+                  </td>
+                  <td>
+                    $
+                    {pool.day.volume.toLocaleString(undefined, {
+                      maximumFractionDigits: 2
+                    })}
+                  </td>
+                  <td>{pool.day.apr.toFixed(2)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            <button onClick={handlePreviousPage} disabled={page === 1}>
+              Previous
+            </button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <button onClick={handleNextPage} disabled={page === totalPages}>
+              Next
+            </button>
+          </div>
+        </>
       ) : (
         <p>No pool information available.</p>
       )}
