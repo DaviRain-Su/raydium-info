@@ -23,6 +23,10 @@
   "manifest": {
     "host_permissions": [
       "https://api-v3.raydium.io/*"
-    ]
+    ],
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
+    }
   }
 }
