@@ -5,10 +5,11 @@
   "description": "Browser extension for Raydium information",
   "author": "Your Name",
   "scripts": {
-    "dev": "plasmo dev",
+    "dev": "plasmo dev --port 3000",
     "build": "plasmo build"
   },
   "dependencies": {
+    "@plasmohq/storage": "^1.11.0",
     "plasmo": "^0.60.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
